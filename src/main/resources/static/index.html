@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <style>
+ #drop_zone {
+    max-width: 200px;
+  height: 200px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  cursor: pointer;
+  color: #cccccc;
+  border: 4px dashed #009578;
+  border-radius: 10px;
+}
+}
+        </style>
+    </head>
+    <body>
+        <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+            <p>Drag one or more files to this Drop Zone ...</p>
+          </div>
+
+        <script>
+            function dropHandler(ev) {
+                console.log('File(s) dropped');
+
+                // Prevent default behavior (Prevent file from being opened)
+                ev.preventDefault();
+
+                if (ev.dataTransfer.items) {
+                    // Use DataTransferItemList interface to access the file(s)
+                    for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+                    // If dropped items aren't files, reject them
+                    if (ev.dataTransfer.items[i].kind === 'file') {
+                        var file = ev.dataTransfer.items[i].getAsFile();
+                        console.log('... items file[' + i + '].name = ' + file.name + " size: " + file.size/(1024*1204) + "MB");
+                        var xhr = new XMLHttpRequest();
+                        var fd = new FormData();
+                        fd.append("file", file);
+//                        xhr.upload.addEventListener("progress", onUploadProgress, false);
+//                        xhr.addEventListener("load", onUploadComplete, false);
+//                        xhr.addEventListener("error", onUploadError, false);
+                        xhr.open("POST", "/upload", true);
+                        xhr.send(fd);
+                    }
+                    }
+                } else {
+                    // Use DataTransfer interface to access the file(s)
+                    for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                    console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+                    }
+                }
+            } 
+            function dragOverHandler(ev) {
+            // Prevent default behavior (Prevent file from being opened)
+            ev.preventDefault();
+            }
+        </script>
+    </body>
+</html>
